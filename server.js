@@ -58,8 +58,9 @@ app.get("/api/admin", authenticate, (req, res) => {
     message: "Welcome Admin!",
     user: req.user
   });
+
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://${process.env.ENVIROMENT || 'localhost'}:${PORT}/`);
+  console.log(`Server is running on port http://${process.env.ENVIROMENT}`);
 });
