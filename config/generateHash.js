@@ -12,4 +12,4 @@ const generatePasswordHash = async (password) => {
 
 // Usage: node config/generateHash.js your_password_here
 const password = process.argv[2] || "admin123"; // Default password if none provided
-generatePasswordHash("PankajD2003N");
+generatePasswordHash("123456");

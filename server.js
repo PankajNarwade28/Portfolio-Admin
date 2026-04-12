@@ -1,8 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";   
+ 
+import dotenv from "dotenv"; 
+dotenv.config(); 
+import pool from "./config/db.js";
+
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("Database Error:", err);
+  } else {
+    console.log("Connected to DB:", res.rows);
+  }
+});
+
 const PORT = process.env.PORT || 3000; 
-const app = express();
+const app = express(); 
 
 // CORS configuration
 const corsOptions = {
@@ -32,11 +44,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-
-// Import routes
-const authRoutes = require("./routes/auth");
-const { authenticate } = require("./middleware/auth");
-
+ 
+import authRoutes from "./routes/auth.js";
+import { authenticate } from "./middleware/auth.js";
 // Public routes
 app.get("/", (req, res) => {
   res.send("Server is running on port 5000");
@@ -47,7 +57,7 @@ app.get("/api/status", (req, res) => {
     status: "OK",
     message: "Backend is running fine 🚀",
   });
-});
+}); 
 
 // Auth routes
 app.use("/api/auth", authRoutes);

@@ -1,19 +1,33 @@
-const jwt = require("jsonwebtoken");
+import dotenv from "dotenv";
+dotenv.config();
 
-const authenticate = (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient( 
+  process.env.REACT_APP_SUPABASE_URL, 
+  process.env.REACT_APP_SUPABASE_PUBLISHABLE_KEY   
+);
+ 
+ 
+ 
+export const authenticate = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
   if (!token) {
-    return res.status(403).json({ message: "No token provided" });
+    return res.status(401).json({ message: "No token" });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Unauthorized - Invalid or expired token" });
-    }
-    req.user = decoded;
-    next();
-  });
-};
+  const { data, error } = await supabase.auth.getUser(token);
 
-module.exports = { authenticate };
+  if (error) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  // ✅ Only allow YOUR admin email
+  if (data.user.email !== "pankajnarwade.word@gmail.com") {
+    return res.status(403).json({ message: "Not admin" });
+  }
+
+  req.user = data.user;
+  next();
+};
