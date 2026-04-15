@@ -71,6 +71,10 @@ app.get("/api/admin", authenticate, (req, res) => {
 
 });
 
+// routes
+import statusRoutes from "./routes/status.js";
+app.use("/api/status", statusRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port http://${process.env.ENVIROMENT}`);
 });
