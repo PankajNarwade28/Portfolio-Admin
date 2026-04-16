@@ -60,7 +60,14 @@ app.get("/api/status", (req, res) => {
 }); 
 
 // Auth routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes); 
+import categoryRoutes from "./routes/categories.js";
+import skillRoutes from "./routes/skills.js";
+import uploadRoutes from "./routes/upload.js";
+ 
+app.use("/api/upload", uploadRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/skills", skillRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {

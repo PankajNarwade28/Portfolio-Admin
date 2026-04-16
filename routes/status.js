@@ -1,12 +1,8 @@
 
 const express = require("express");
-const router = express.Router();
-const { createClient } = require("@supabase/supabase-js");
-
-const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_PUBLISHABLE_KEY
-);
+const router = express.Router(); 
+const supabase = require("../config/supabase"); 
+ 
 
 // ✅ Backend Health Check
 router.get("/backend", (req, res) => {
