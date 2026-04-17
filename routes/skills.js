@@ -2,7 +2,6 @@ const express = require("express");
 const supabase = require("../config/supabase");
 const router = express.Router();
 
-
 // ➕ ADD SKILL (WITH ORDER SHIFT)
 router.post("/", async (req, res) => {
   try {
@@ -20,18 +19,16 @@ router.post("/", async (req, res) => {
       pos: order_index,
     });
 
-    const { data, error } = await supabase
-      .from("skill_items")
-      .insert([
-        {
-          skill_name,
-          percentage,
-          emoji: emoji || "💡",
-          print_statement,
-          order_index,
-          category_id,
-        },
-      ]);
+    const { data, error } = await supabase.from("skill_items").insert([
+      {
+        skill_name,
+        percentage,
+        emoji: emoji || "💡",
+        print_statement,
+        order_index,
+        category_id,
+      },
+    ]);
 
     if (error) throw error;
 
@@ -40,7 +37,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // ✏️ UPDATE SKILL
 router.put("/:id", async (req, res) => {
@@ -59,46 +55,31 @@ router.put("/:id", async (req, res) => {
   res.json(data);
 });
 
-
-// ❌ DELETE SKILL
 router.delete("/:id", async (req, res) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("skill_items")
       .delete()
-      .eq("id", req.params.id);
+      .eq("id", req.params.id)
+      .select(); // ✅ IMPORTANT
 
     if (error) throw error;
 
-    res.json({ message: "Skill deleted" });
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        message: "No row deleted (check ID or RLS)",
+      });
+    }
+
+    res.json({
+      message: "Skill deleted ✅",
+      deleted: data,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
-// 🔄 REORDER SKILLS (DRAG-DROP SUPPORT)
-router.put("/reorder", async (req, res) => {
-  try {
-    const updates = req.body; 
-    // [{id, order_index}]
-
-    const promises = updates.map((item) =>
-      supabase
-        .from("skill_items")
-        .update({ order_index: item.order_index })
-        .eq("id", item.id)
-    );
-
-    await Promise.all(promises);
-
-    res.json({ message: "Reordered successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ✅ GET SKILLS (FRONTEND FORMAT)
+// GET ALL CATEGORIES WITH SKILLS
 router.get("/", async (req, res) => {
   try {
     // 1️⃣ Fetch categories
@@ -130,16 +111,42 @@ router.get("/", async (req, res) => {
           percentage: skill.percentage,
           emoji: skill.emoji || "💡",
           print_statement: skill.print_statement,
+          order_index: skill.order_index,
         })),
     }));
 
     res.json(result);
-
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
   }
 });
 
+router.put("/reorder", async (req, res) => {
+  try {
+    const { items } = req.body;
 
+    console.log("Incoming items:", items);
+
+    await supabase.from("skill_items").update({ order_index: 999 }); // temp reset
+
+    await supabase
+      .from("skill_items")
+      .upsert(items, { onConflict: "id" })
+      .select();
+
+    console.log("UPDATED DATA:", data);
+    console.log("ERROR:", error);
+
+    if (error) throw error;
+
+    res.json({
+      message: "Reordered ✅",
+      data,
+    });
+  } catch (err) {
+    console.error("REORDER ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
