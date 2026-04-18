@@ -127,8 +127,7 @@ router.put("/reorder", async (req, res) => {
     const { items } = req.body;
 
     console.log("Incoming items:", items);
-
-    await supabase.from("skill_items").update({ order_index: 999 }); // temp reset
+ 
 
     await supabase
       .from("skill_items")
