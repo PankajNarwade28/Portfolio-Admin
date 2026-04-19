@@ -48,5 +48,42 @@ router.post("/verify", (req, res) => {
     res.json({ valid: false });
   }
 });
+ 
 
+router.post("/verify-password", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    const { password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ valid: false });
+    }
+
+    // ✅ Verify token using Supabase
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
+    if (userError || !user) {
+      return res.json({ valid: false });
+    }
+
+    // ✅ Re-authenticate user
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password,
+    });
+
+    if (error || !data.user) {
+      return res.json({ valid: false });
+    }
+
+    return res.json({ valid: true });
+
+  } catch (err) {
+    console.error(err);
+    return res.json({ valid: false });
+  }
+});
 export default router;

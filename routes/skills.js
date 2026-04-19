@@ -38,21 +38,118 @@ router.post("/", async (req, res) => {
   }
 });
 
+// REORDER SKILLS
+router.put("/reorder", async (req, res) => {
+  try {
+    const { items } = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "items must be a non-empty array",
+      });
+    }
+
+    const seenOrderIndexes = new Set();
+    for (const item of items) {
+      if (!item?.id || typeof item.order_index !== "number") {
+        return res.status(400).json({
+          success: false,
+          error: "Each item must have id and numeric order_index",
+        });
+      }
+
+      if (seenOrderIndexes.has(item.order_index)) {
+        return res.status(400).json({
+          success: false,
+          error: "order_index values must be unique",
+        });
+      }
+
+      seenOrderIndexes.add(item.order_index);
+    }
+
+    // Two-phase update avoids unique(category_id, order_index) collisions.
+    const tempBase = 2000000000;
+    const tempUpdates = items.map((item, index) =>
+      supabase
+        .from("skill_items")
+        .update({ order_index: tempBase + index })
+        .eq("id", item.id)
+        .select("id")
+    );
+
+    const tempResults = await Promise.all(tempUpdates);
+    const tempError = tempResults.find((r) => r.error);
+
+    if (tempError) {
+      console.error("Supabase temporary reorder error:", tempError.error);
+      return res.status(500).json({
+        success: false,
+        error: tempError.error.message,
+      });
+    }
+
+    const updates = items.map((item) =>
+      supabase
+        .from("skill_items")
+        .update({ order_index: item.order_index })
+        .eq("id", item.id)
+        .select("id, order_index")
+    );
+
+    const results = await Promise.all(updates);
+    const firstError = results.find((r) => r.error);
+
+    if (firstError) {
+      console.error("Supabase reorder error:", firstError.error);
+      return res.status(500).json({
+        success: false,
+        error: firstError.error.message,
+      });
+    }
+
+    const missingRow = results.find((r) => !r.data || r.data.length === 0);
+    if (missingRow) {
+      return res.status(404).json({
+        success: false,
+        error: "One or more skills were not found",
+      });
+    }
+
+    const data = results.map((r) => r.data[0]);
+
+    return res.json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    console.error("Reorder route error:", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ✏️ UPDATE SKILL
 router.put("/:id", async (req, res) => {
-  const { skill_name, percentage, emoji, print_statement } = req.body;
+  try {
+    const { skill_name, percentage, emoji, print_statement } = req.body;
 
-  const { data, error } = await supabase
-    .from("skill_items")
-    .update({
-      skill_name,
-      percentage,
-      emoji,
-      print_statement,
-    })
-    .eq("id", req.params.id);
+    const { data, error } = await supabase
+      .from("skill_items")
+      .update({
+        skill_name,
+        percentage,
+        emoji,
+        print_statement,
+      })
+      .eq("id", req.params.id);
 
-  res.json(data);
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.delete("/:id", async (req, res) => {
@@ -79,6 +176,7 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 // GET ALL CATEGORIES WITH SKILLS
 router.get("/", async (req, res) => {
   try {
@@ -122,30 +220,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.put("/reorder", async (req, res) => {
-  try {
-    const { items } = req.body;
-
-    console.log("Incoming items:", items);
- 
-
-    await supabase
-      .from("skill_items")
-      .upsert(items, { onConflict: "id" })
-      .select();
-
-    console.log("UPDATED DATA:", data);
-    console.log("ERROR:", error);
-
-    if (error) throw error;
-
-    res.json({
-      message: "Reordered ✅",
-      data,
-    });
-  } catch (err) {
-    console.error("REORDER ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
+router.put("/test", (req, res) => {
+  console.log("TEST HIT!");
+  res.json({ message: "Backend is reachable" });
 });
 module.exports = router;

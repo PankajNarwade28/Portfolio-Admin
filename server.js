@@ -1,9 +1,24 @@
 import express from "express";
 import cors from "cors";   
- 
 import dotenv from "dotenv"; 
 dotenv.config(); 
 import pool from "./config/db.js";
+const PORT = process.env.PORT || 3000; 
+const app = express(); 
+
+// 2. Configure CORS - This is the MOST IMPORTANT PART
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow your React app
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Explicitly allow PUT
+  allowedHeaders: ['Content-Type']
+}));
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(`${req.method} request to ${req.url}`);
+  next();
+});
 
 pool.query("SELECT NOW()", (err, res) => {
   if (err) {
@@ -13,37 +28,7 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000; 
-const app = express(); 
 
-// CORS configuration
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      process.env.FRONTEND_URL
-    ].filter(Boolean); // Remove undefined values
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow all origins in development
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Length', 'X-Request-Id'],
-  maxAge: 86400 // 24 hours
-};
-
-app.use(cors(corsOptions));
-app.use(express.json());
  
 import authRoutes from "./routes/auth.js";
 import { authenticate } from "./middleware/auth.js";
@@ -61,13 +46,13 @@ app.get("/api/status", (req, res) => {
 
 // Auth routes
 app.use("/api/auth", authRoutes); 
-import categoryRoutes from "./routes/categories.js";
-import skillRoutes from "./routes/skills.js";
+import categoryRoutes from "./routes/categories.js"; 
 import uploadRoutes from "./routes/upload.js";
  
 app.use("/api/upload", uploadRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/skills", skillRoutes);
+app.use("/api/categories", categoryRoutes); 
+import skillRoutes from "./routes/skills.js";
+app.use('/api/skills', skillRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
