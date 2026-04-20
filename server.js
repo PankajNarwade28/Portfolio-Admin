@@ -52,7 +52,9 @@ import uploadRoutes from "./routes/upload.js";
 app.use("/api/upload", uploadRoutes);
 app.use("/api/categories", categoryRoutes); 
 import skillRoutes from "./routes/skills.js";
-app.use('/api/skills', skillRoutes);
+app.use('/api/skills', skillRoutes); 
+import aboutMeRoutes from "./routes/aboutme.js";
+app.use('/api/about-me', aboutMeRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {

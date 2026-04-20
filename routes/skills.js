@@ -5,35 +5,48 @@ const router = express.Router();
 // ➕ ADD SKILL (WITH ORDER SHIFT)
 router.post("/", async (req, res) => {
   try {
-    let {
+    const {
       skill_name,
       percentage,
       emoji,
       print_statement,
-      order_index,
       category_id,
     } = req.body;
 
-    await supabase.rpc("shift_skill_order", {
-      cat_id: category_id,
-      pos: order_index,
-    });
+    // ✅ Step 1: Get last order_index
+    const { data: existing, error: fetchError } = await supabase
+      .from("skill_items")
+      .select("order_index")
+      .eq("category_id", category_id)
+      .order("order_index", { ascending: false })
+      .limit(1);
 
-    const { data, error } = await supabase.from("skill_items").insert([
-      {
-        skill_name,
-        percentage,
-        emoji: emoji || "💡",
-        print_statement,
-        order_index,
-        category_id,
-      },
-    ]);
+    if (fetchError) throw fetchError;
+
+    const nextOrder =
+      existing.length > 0 ? existing[0].order_index + 1 : 1;
+
+    // ✅ Step 2: Insert safely
+    const { data, error } = await supabase
+      .from("skill_items")
+      .insert([
+        {
+          skill_name,
+          percentage,
+          emoji: emoji || "💡",
+          print_statement,
+          category_id,
+          order_index: nextOrder, // 👈 AUTO SET
+        },
+      ])
+      .select();
 
     if (error) throw error;
 
-    res.json(data);
+    res.json({ success: true, data });
+
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
