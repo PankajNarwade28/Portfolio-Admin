@@ -54,7 +54,10 @@ app.use("/api/categories", categoryRoutes);
 import skillRoutes from "./routes/skills.js";
 app.use('/api/skills', skillRoutes); 
 import aboutMeRoutes from "./routes/aboutme.js";
-app.use('/api/about-me', aboutMeRoutes);
+app.use('/api/about-me', aboutMeRoutes); 
+import educationRoutes from "./routes/education.js";
+
+app.use("/api/education", educationRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
