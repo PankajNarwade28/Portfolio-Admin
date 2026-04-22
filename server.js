@@ -8,9 +8,15 @@ const app = express();
 
 // 2. Configure CORS - This is the MOST IMPORTANT PART
 app.use(cors({
-  origin: ['http://localhost:3000', process.env.REACT_APP_API_URL , 'https://pankajnarwade.vercel.app/'], // Allow your React app
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Explicitly allow PUT
-  allowedHeaders: ['Content-Type']
+  origin: [
+    'http://localhost:3000', 
+    'https://pankajnarwade.vercel.app',
+    'https://pankajnarwade-i3hs5mpce-pankajnarwade28s-projects.vercel.app',
+    'https://pankajnarwade-git-main-pankajnarwade28s-projects.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 app.use(express.json());
