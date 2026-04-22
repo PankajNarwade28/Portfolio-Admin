@@ -8,7 +8,7 @@ const app = express();
 
 // 2. Configure CORS - This is the MOST IMPORTANT PART
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow your React app
+  origin: ['http://localhost:3000', process.env.REACT_APP_API_URL , 'https://pankajnarwade.vercel.app/'], // Allow your React app
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Explicitly allow PUT
   allowedHeaders: ['Content-Type']
 }));
