@@ -47,4 +47,49 @@ router.post("/image", upload.single("file"), async (req, res) => {
   }
 });
 
+router.post("/pdf", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No PDF file received" });
+    }
+
+    // Ensure only PDFs are uploaded
+    if (req.file.mimetype !== 'application/pdf') {
+      return res.status(400).json({ error: "Only PDF files are allowed" });
+    }
+
+    const file = req.file;
+    const subfolder = req.body.folder || "resumes";
+
+    console.log(`Uploading PDF to ${subfolder}:`, file.originalname);
+
+    // Create unique file path
+    const filePath = `${subfolder}/${Date.now()}-${file.originalname}`;
+
+    const { data, error } = await supabase.storage
+      .from("PDF") // Target your PDF bucket name
+      .upload(filePath, file.buffer, {
+        contentType: "application/pdf",
+        upsert: false
+      });
+
+    if (error) {
+      console.error("Supabase PDF Upload Error:", error);
+      throw error;
+    }
+
+    // Generate the public URL
+    const { data: publicData } = supabase.storage
+      .from("PDF")
+      .getPublicUrl(filePath);
+
+    res.json({ 
+      message: "PDF uploaded successfully",
+      url: publicData.publicUrl 
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
