@@ -62,8 +62,9 @@ app.use('/api/skills', skillRoutes);
 import aboutMeRoutes from "./routes/aboutme.js";
 app.use('/api/about-me', aboutMeRoutes); 
 import educationRoutes from "./routes/education.js";
-
 app.use("/api/education", educationRoutes);
+import personalInfoRoutes from "./routes/personalInfo.js";
+app.use("/api/personal", personalInfoRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
