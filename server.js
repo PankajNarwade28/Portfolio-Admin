@@ -65,6 +65,8 @@ import educationRoutes from "./routes/education.js";
 app.use("/api/education", educationRoutes);
 import personalInfoRoutes from "./routes/personalInfo.js";
 app.use("/api/personal", personalInfoRoutes);
+import achievementRoutes from "./routes/achievements.js";
+app.use("/api/achievements", achievementRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
