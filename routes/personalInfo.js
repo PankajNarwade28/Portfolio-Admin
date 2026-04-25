@@ -22,4 +22,51 @@ router.get("/info", async (req, res) => {
   }
 });
 
+router.get("/tech", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("tech_stack")
+      .select("*");
+
+      if(error) {
+        console.error("Supabase Tech Stack Error:", error);
+        throw error;
+      }
+
+    res.json(data);
+  } catch (err) {
+    console.error("GET TECH STACK ERROR:", err);
+    res.status(500).json({ error: "Failed to fetch tech stack information" });
+  }
+});
+
+// ✅ UPDATE one tech
+router.put("/tech/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, icon_symbol, hex_color, code_example } = req.body;
+    console.log("Updating Tech ID:", id, "with data:", req.body);
+    const { data, error } = await supabase
+      .from("tech_stack")
+      .update({
+        name,
+        icon_symbol,
+        hex_color,
+        code_example,
+      })
+      .eq("id", id)
+      .select();
+
+    if (error) throw error;
+
+    res.json({
+      message: "Updated ✅",
+      data,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
  export default router;
