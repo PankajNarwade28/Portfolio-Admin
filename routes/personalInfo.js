@@ -69,4 +69,22 @@ router.put("/tech/:id", async (req, res) => {
 });
 
 
+router.get("/links", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("social_links")
+      .select("*");
+
+    if (error) {
+      console.error("Supabase Social Links Error:", error);
+      throw error;
+    }
+    res.json(data);
+  }
+    catch (err) {
+      console.error("GET SOCIAL LINKS ERROR:", err);
+      res.status(500).json({ error: "Failed to fetch social links" });
+    }
+});
+
  export default router;
