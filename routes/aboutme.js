@@ -44,4 +44,63 @@ router.put("/", async (req, res) => {
   }
 });
 
+router.get("/titles", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("personal_info")
+      .select("professional_titles")
+      .single();
+
+    if (error) throw error;
+
+    res.json(data.professional_titles || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/titles", async (req, res) => {
+  try {
+    const { title } = req.body;
+
+    const { data } = await supabase
+      .from("personal_info")
+      .select("professional_titles")
+      .single();
+
+    const updated = [...(data.professional_titles || []), title];
+
+    await supabase
+      .from("personal_info")
+      .update({ professional_titles: updated })
+      .eq("id", 1);
+
+    res.json({ message: "Added ✅" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/titles/:index", async (req, res) => {
+  try {
+    const index = parseInt(req.params.index);
+
+    const { data } = await supabase
+      .from("personal_info")
+      .select("professional_titles")
+      .single();
+
+    const updated = data.professional_titles.filter((_, i) => i !== index);
+
+    await supabase
+      .from("personal_info")
+      .update({ professional_titles: updated })
+      .eq("id", 1);
+
+    res.json({ message: "Deleted ✅" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
