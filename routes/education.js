@@ -36,6 +36,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// ✅ UPDATE education
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
 

@@ -233,6 +233,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// TEST ENDPOINT
 router.put("/test", (req, res) => {
   console.log("TEST HIT!");
   res.json({ message: "Backend is reachable" });

@@ -22,6 +22,7 @@ router.get("/info", async (req, res) => {
   }
 });
 
+// ✅ UPDATE personal information
 router.get("/tech", async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -68,7 +69,7 @@ router.put("/tech/:id", async (req, res) => {
   }
 });
 
-
+// ✅ GET social links
 router.get("/links", async (req, res) => {
   try {
     const { data, error } = await supabase

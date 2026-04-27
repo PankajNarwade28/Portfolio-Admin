@@ -44,6 +44,7 @@ router.put("/", async (req, res) => {
   }
 });
 
+// Professional Titles Endpoints
 router.get("/titles", async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -59,6 +60,7 @@ router.get("/titles", async (req, res) => {
   }
 });
 
+// Add a new title to the array
 router.post("/titles", async (req, res) => {
   try {
     const { title } = req.body;
@@ -81,6 +83,7 @@ router.post("/titles", async (req, res) => {
   }
 });
 
+// Delete a title by index
 router.delete("/titles/:index", async (req, res) => {
   try {
     const index = parseInt(req.params.index);

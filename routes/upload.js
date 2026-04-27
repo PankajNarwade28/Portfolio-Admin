@@ -4,6 +4,7 @@ const supabase = require("../config/supabase");
 const router = express.Router();
 const upload = multer();
 
+// ✅ UPLOAD IMAGE TO SUPABASE STORAGE
 router.post("/image", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
@@ -47,6 +48,7 @@ router.post("/image", upload.single("file"), async (req, res) => {
   }
 });
 
+// ADDITIONAL ENDPOINT FOR PDF UPLOADS
 router.post("/pdf", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
@@ -92,4 +94,5 @@ router.post("/pdf", upload.single("file"), async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 module.exports = router;
