@@ -88,4 +88,48 @@ router.get("/links", async (req, res) => {
     }
 });
 
+// ✅ UPDATE personal information
+router.put("/info", async (req, res) => {
+  try {
+    const {
+      full_name,
+      current_company,
+      designation,
+      is_available,
+      profile_img,
+      resume_url,
+      professional_titles,
+    } = req.body;
+
+    const { data, error } = await supabase
+      .from("personal_info")
+      .update({
+        full_name,
+        current_company,
+        designation,
+        is_available,
+        profile_img,
+        resume_url,
+        professional_titles,
+      })
+      .eq("id", 1) // 👈 IMPORTANT: since only one record exists
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase Update Error:", error);
+      throw error;
+    }
+
+    res.json({
+      message: "Personal info updated successfully ✅",
+      data,
+    });
+  } catch (err) {
+    console.error("UPDATE PERSONAL INFO ERROR:", err);
+    res.status(500).json({
+      error: "Failed to update personal information",
+    });
+  }
+});
  export default router;
