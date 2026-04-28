@@ -67,6 +67,8 @@ import personalInfoRoutes from "./routes/personalInfo.js";
 app.use("/api/personal", personalInfoRoutes);
 import achievementRoutes from "./routes/achievements.js";
 app.use("/api/achievements", achievementRoutes);
+import projectRoutes from "./routes/projects.js";
+app.use("/api/projects", projectRoutes); 
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
