@@ -5,6 +5,7 @@ const router = express.Router();
 /* =========================
    🟢 GET ALL PROJECTS
 ========================= */
+// Fetch all projects, ordered by 'order_index' for consistent display order on the frontend
 router.get("/", async (req, res) => {
   try {
     const { data, error } = await supabase
