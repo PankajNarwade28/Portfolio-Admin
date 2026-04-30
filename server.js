@@ -71,6 +71,8 @@ import projectRoutes from "./routes/projects.js";
 app.use("/api/projects", projectRoutes); 
 import certificateRoutes from "./routes/certificates.js";
 app.use("/api/certificates", certificateRoutes);
+import dashboardRoutes from "./routes/dashboard.js";
+app.use("/api/dashboard", dashboardRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
