@@ -88,11 +88,10 @@ router.get("/links", async (req, res) => {
     }
 });
 
-// ✅ UPDATE personal information
+// ✅ UPDATE one social link  Personal_Info Table 
 router.put("/info", async (req, res) => {
   try {
     const {
-      full_name,
       current_company,
       designation,
       is_available,
@@ -104,7 +103,6 @@ router.put("/info", async (req, res) => {
     const { data, error } = await supabase
       .from("personal_info")
       .update({
-        full_name,
         current_company,
         designation,
         is_available,
@@ -112,24 +110,20 @@ router.put("/info", async (req, res) => {
         resume_url,
         professional_titles,
       })
-      .eq("id", 1) // 👈 IMPORTANT: since only one record exists
+      .eq("id", 1)
       .select()
       .single();
 
-    if (error) {
-      console.error("Supabase Update Error:", error);
-      throw error;
-    }
+    if (error) throw error;
 
     res.json({
-      message: "Personal info updated successfully ✅",
+      message: "Updated successfully ✅",
       data,
     });
+
   } catch (err) {
-    console.error("UPDATE PERSONAL INFO ERROR:", err);
-    res.status(500).json({
-      error: "Failed to update personal information",
-    });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
  export default router;

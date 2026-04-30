@@ -69,6 +69,8 @@ import achievementRoutes from "./routes/achievements.js";
 app.use("/api/achievements", achievementRoutes);
 import projectRoutes from "./routes/projects.js";
 app.use("/api/projects", projectRoutes); 
+import certificateRoutes from "./routes/certificates.js";
+app.use("/api/certificates", certificateRoutes);
 
 // Protected routes (example)
 app.get("/api/admin", authenticate, (req, res) => {
