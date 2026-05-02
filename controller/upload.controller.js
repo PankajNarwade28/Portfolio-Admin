@@ -2,7 +2,7 @@ import supabase from "../config/supabase.js";
 import multer from "multer";
 import express from "express";
 const router = express.Router();
-const upload = multer(); 
+const upload = multer();
 
 // ✅ UPLOAD IMAGE TO SUPABASE STORAGE
 const uploadImage = async (req, res) => {
@@ -22,11 +22,11 @@ const uploadImage = async (req, res) => {
     // This creates/uses the folder 'About_images/12345-image.png'
     const filePath = `${subfolder}/${Date.now()}-${file.originalname}`;
 
-    const { data, error } = await supabase.storage
+    const {  error } = await supabase.storage
       .from("images") // bucket name
       .upload(filePath, file.buffer, {
         contentType: file.mimetype,
-        upsert: false // Set to true if you want to overwrite existing files
+        upsert: false, // Set to true if you want to overwrite existing files
       });
 
     if (error) {
@@ -42,7 +42,6 @@ const uploadImage = async (req, res) => {
     console.log("Public URL:", publicData.publicUrl);
 
     res.json({ url: publicData.publicUrl });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -79,39 +78,39 @@ const uploadPdf = async (req, res) => {
       throw fetchError;
     }
 
-  // ===============================
-// ✅ DELETE OLD FILE (FIXED)
-// ===============================
-if (existing?.resume_url) {
-  try {
-    const oldUrl = existing.resume_url;
+    // ===============================
+    // ✅ DELETE OLD FILE (FIXED)
+    // ===============================
+    if (existing?.resume_url) {
+      try {
+        const oldUrl = existing.resume_url;
 
-    // ✅ Correct extraction using URL API
-    const url = new URL(oldUrl);
-    const fullPath = url.pathname;
+        // ✅ Correct extraction using URL API
+        const url = new URL(oldUrl);
+        const fullPath = url.pathname;
 
-    // Extract path after /public/PDF/
-    const filePath = fullPath.split("/public/PDF/")[1];
+        // Extract path after /public/PDF/
+        const filePath = fullPath.split("/public/PDF/")[1];
 
-    if (filePath) {
-      console.log("Deleting old file:", filePath);
+        if (filePath) {
+          console.log("Deleting old file:", filePath);
 
-      const { error: deleteError } = await supabase.storage
-        .from("PDF")
-        .remove([filePath]); 
+          const { error: deleteError } = await supabase.storage
+            .from("PDF")
+            .remove([filePath]);
 
-      if (deleteError) {
-        console.error("Delete failed:", deleteError.message);
-      } else {
-        console.log("Old file deleted ✅");
+          if (deleteError) {
+            console.error("Delete failed:", deleteError.message);
+          } else {
+            console.log("Old file deleted ✅");
+          }
+        } else {
+          console.warn("File path extraction failed");
+        }
+      } catch (err) {
+        console.error("Delete parsing error:", err.message);
       }
-    } else {
-      console.warn("File path extraction failed");
     }
-  } catch (err) {
-    console.error("Delete parsing error:", err.message);
-  }
-}
 
     // ===============================
     // ✅ STEP 3: UPLOAD NEW FILE
@@ -159,7 +158,6 @@ if (existing?.resume_url) {
       message: "Resume updated successfully ✅",
       url: newUrl,
     });
-
   } catch (err) {
     console.error("FINAL ERROR:", err);
     res.status(500).json({
@@ -167,6 +165,5 @@ if (existing?.resume_url) {
     });
   }
 };
- 
 
 export { uploadImage, uploadPdf };

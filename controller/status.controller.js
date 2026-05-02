@@ -12,7 +12,7 @@ const getBackendStatus = (req, res) => {
 // ✅ Database (Supabase) Health Check
 const getDatabaseStatus = async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const {  error } = await supabase
       .from("Status") // any table you already have
       .select("*")
       .limit(1);
