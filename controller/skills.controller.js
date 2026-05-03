@@ -135,11 +135,11 @@ const reorderSkills = async (req, res) => {
 // ✏️ UPDATE SKILL
 const updateSkill = async (req, res) => {
   try {
-    const { skill_name, percentage, emoji, print_statement } = req.body;
+    const { skill_name, percentage, emoji, print_statement, id } = req.body;
 
     const { data, error } = await supabase
       .from("skill_items")
-      .update({
+      .update({ 
         skill_name,
         percentage,
         emoji,
