@@ -41,6 +41,7 @@ import personalInfoRoutes from "./routes/personalInfo.routes.js";
 import achievementRoutes from "./routes/achievements.routes.js";
 import projectsRoutes from "./routes/projects.routes.js";
 import certificateRoutes from "./routes/certificates.routes.js";
+import linksRoutes from "./routes/links.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import statusRoutes from "./routes/status.routes.js";
  
@@ -67,6 +68,7 @@ app.use("/api/personal", personalInfoRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/projects", projectsRoutes);
 app.use("/api/certificates", certificateRoutes);
+app.use("/api/links", linksRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/status", statusRoutes);
 
