@@ -70,8 +70,7 @@ app.use("/api/projects", projectsRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/links", linksRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/status", statusRoutes);
-
+app.use("/api/status", statusRoutes); 
 // -------------------- Protected Routes --------------------
 app.get("/api/admin", authenticate, (req, res) => {
   res.json({
