@@ -21,7 +21,8 @@ const getAllLinks = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("social_links") // Assuming you have a table named 'social_links'
-      .select("*");
+      .select("*")
+      .order("id", { ascending: true }); // ✅ Sorts by ID in ascending order
 
     if (error) {
       // This will show you exactly what Supabase doesn't like
