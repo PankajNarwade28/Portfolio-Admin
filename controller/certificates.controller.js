@@ -10,7 +10,7 @@ const getAllCertificates = async (req, res) => {
     const { data, error } = await supabase
       .from("certifications")
       .select("*")
-      .order("id", { ascending: true });
+      .order("order_index", { ascending: true });
 
     if (error) throw error;
     res.json(data);
@@ -117,12 +117,90 @@ const uploadCertificatePdf = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
-};
+}; 
 
+// REORDER CERTIFICATES
+const reorderCertificates = async (req, res) => {
+  try {
+    const { items } = req.body;
+
+    // Validation
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "Items must be a non-empty array",
+      });
+    }
+
+    console.log("Received reorder items:", items);
+
+    // STEP 1 → Temporary negative indexes
+    for (const item of items) {
+      const tempIndex = -Math.abs(Number(item.order_index));
+
+      const { error } = await supabase
+        .from("certifications")
+        .update({
+          order_index: tempIndex,
+        })
+        .eq("id", item.id);
+
+      if (error) {
+        console.error("Temporary update error:", error);
+
+        return res.status(500).json({
+          success: false,
+          error: error.message,
+        });
+      }
+    }
+
+    // STEP 2 → Final indexes
+    const updatedRows = [];
+
+    for (const item of items) {
+      const finalIndex = Number(item.order_index);
+
+      const { data, error } = await supabase
+        .from("certifications")
+        .update({
+          order_index: finalIndex,
+        })
+        .eq("id", item.id)
+        .select();
+
+      if (error) {
+        console.error("Final update error:", error);
+
+        return res.status(500).json({
+          success: false,
+          error: error.message,
+        });
+      }
+
+      if (data?.length) {
+        updatedRows.push(data[0]);
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: updatedRows,
+    });
+  } catch (error) {
+    console.error("Reorder certificates error:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 export {
   getAllCertificates,
   createCertificate,
   updateCertificate,
   deleteCertificate,
+  reorderCertificates,
   uploadCertificatePdf,
 };
