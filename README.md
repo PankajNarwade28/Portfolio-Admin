@@ -10,8 +10,7 @@ This backend server provides RESTful APIs for:
 - 🔐 **User Authentication** - JWT-based admin login
 - 📝 **Content Management** - About me, skills, projects, education, certifications, etc.
 - 📸 **File Uploads** - Image uploads via Cloudinary
-- 📧 **Email Notifications** - Contact form submissions via Nodemailer
-- 📞 **SMS Notifications** - Twilio integration for alerts
+- 📧 **Email Notifications** - Contact form submissions via Nodemailer 
 - 🗂️ **Database Management** - PostgreSQL with Supabase
 
 ---
@@ -27,8 +26,7 @@ This backend server provides RESTful APIs for:
 | **JWT (jsonwebtoken)** | Token-based authentication |
 | **Bcryptjs** | Password hashing |
 | **Cloudinary** | Image storage & hosting |
-| **Nodemailer** | Email service |
-| **Twilio** | SMS service |
+| **Nodemailer** | Email service | 
 | **CORS** | Cross-origin request handling |
 | **Multer** | File upload middleware |
 | **Dotenv** | Environment variable management |
@@ -39,11 +37,10 @@ This backend server provides RESTful APIs for:
 
 Before you start, ensure you have:
 - **Node.js** (v14 or higher)
-- **npm** or **yarn** package manager
+- **npm**  package manager
 - **PostgreSQL** database (or Supabase account)
 - **Cloudinary** account (for image uploads)
-- **Nodemailer** configured email service
-- **Twilio** account (optional, for SMS)
+- **Nodemailer** configured email service 
 
 ---
 
