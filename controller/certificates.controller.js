@@ -1,7 +1,11 @@
 import express from "express";
 import supabase from "../config/supabase.js";
 import multer from "multer";
-const upload = multer();
+const upload = multer({
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
 const router = express.Router();
 
 /* ================= GET ================= */
@@ -196,6 +200,7 @@ const reorderCertificates = async (req, res) => {
     });
   }
 };
+
 export {
   getAllCertificates,
   createCertificate,
