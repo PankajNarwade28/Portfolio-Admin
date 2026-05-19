@@ -13,6 +13,7 @@ app.use(
       "https://pankajnarwade.vercel.app",
       "https://pankajnarwade-i3hs5mpce-pankajnarwade28s-projects.vercel.app",
       "https://pankajnarwade-git-main-pankajnarwade28s-projects.vercel.app",
+      "https://pankajnarwade-3e13xlkbd-pankajnarwade28s-projects.vercel.app/",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
