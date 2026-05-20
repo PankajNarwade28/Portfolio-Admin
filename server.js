@@ -45,6 +45,7 @@ import certificateRoutes from "./routes/certificates.routes.js";
 import linksRoutes from "./routes/links.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import statusRoutes from "./routes/status.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
  
 // -------------------- Public Routes --------------------
 app.get("/", (req, res) => {
@@ -72,6 +73,7 @@ app.use("/api/certificates", certificateRoutes);
 app.use("/api/links", linksRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/status", statusRoutes); 
+app.use("/api/contact", contactRoutes);
 // -------------------- Protected Routes --------------------
 app.get("/api/admin", authenticate, (req, res) => {
   res.json({
