@@ -81,20 +81,35 @@ const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // 1. Remove fields that shouldn't be explicitly updated 
+    // Updating primary keys (id) or auto-timestamps can sometimes cause silent rejections
+    const updatePayload = { ...req.body };
+    delete updatePayload.id;
+    delete updatePayload.created_at;
+    delete updatePayload.updated_at;
+
     const { data, error } = await supabase
       .from("projects")
-      .update(req.body)
+      .update(updatePayload) // Use the cleaned payload
       .eq("id", id)
       .select();
 
     if (error) throw error;
+
+    // 🚨 THE CRITICAL CHECK 🚨
+    if (!data || data.length === 0) {
+      console.log("⚠️ WARNING: Supabase found no row to update, or RLS blocked it!");
+      return res.status(400).json({ 
+        success: false, 
+        message: "Update failed. Check Row Level Security (RLS) or ID match." 
+      });
+    }
 
     res.json({ success: true, data: data[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
 export {
   getAllProjects,
   createProject,
