@@ -24,7 +24,7 @@ export const authenticate = async (req, res, next) => {
   }
 
   // ✅ Only allow YOUR admin email
-  if (data.user.email !== "pankajnarwade.word@gmail.com") {
+  if (data.user.email !== "pankajnarwade.work@gmail.com") {
     return res.status(403).json({ message: "Not admin" });
   }
 
